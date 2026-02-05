@@ -1,0 +1,93 @@
+                    /* Navigation styles */
+
+nav{
+    margin-top: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+}
+nav a {
+    font-family:'Sen', sans-serif;
+    color: #000;
+    background-color: #ffffff;
+    padding-bottom: 15px;
+    margin-right: 10px;
+    font-size: 17px;
+    transition: transform 0.3s;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+}
+nav a:hover{
+      transform: translateY(-9px);
+}
+nav a::before{
+    content: "";
+    position: absolute;
+    z-index: -1;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #F0F0F0;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s ease;
+}
+
+nav a:hover::before{
+      transform: scaleY(1);
+}
+
+                    /* Heading styles */
+h1{
+    font-family: 'Noto', sans-serif;
+    text-align: center;
+    margin-top: 35px;
+    margin-bottom: 70px;
+}
+
+.form-section-signup,
+.form-section-signin{
+    font-family: 'Sen', sans-serif;
+    max-width: 400px;
+    margin: 0 auto;             
+    padding: 30px;              
+    background-color: #fff;     
+    border-radius: 8px;          
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+    text-align: center;   
+}
+
+.form-section-signup input[type="text"],
+.form-section-signup input[type="password"],
+.form-section-signin input[type="text"],
+.form-section-signin input[type="password"]{
+    width: 100%;
+    padding: 12px;              
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.form-section-signup button,
+.form-section-signin button{
+    font-family: 'Sen', sans-serif;
+    width: 100%;
+    padding: 12px;
+    color: black;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: transform 0.2s ease;
+}
+
+.form-section-signup button:hover,
+.form-section-signin button:hover{
+    transform: scale(1.1);
+}
