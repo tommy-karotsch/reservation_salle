@@ -1,16 +1,16 @@
                     /* Navigation styles */
 
 nav{
-    margin-top: 20px;
+    padding-bottom: 30px;
     text-align: center;
-    margin-bottom: 20px;
+    margin-top: 15px;
+    margin-bottom: 0px;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
 }
 nav a {
     font-family:'Sen', sans-serif;
     color: #000;
-    background-color: #ffffff;
     padding-bottom: 15px;
     margin-right: 10px;
     font-size: 17px;
@@ -30,7 +30,7 @@ nav a::before{
     left: 0;
     right: 0;
     height: 3px;
-    background-color: #F0F0F0;
+    background-color: #9f1616;
     transform: scaleY(0);
     transform-origin: bottom;
     transition: transform 0.3s ease;
@@ -45,11 +45,16 @@ h1{
     font-family: 'Noto', sans-serif;
     text-align: center;
     margin-top: 35px;
-    margin-bottom: 70px;
+    margin-bottom: 20px;
+}
+.username{
+    color: #9f1616;
 }
 
 .form-section-signup,
-.form-section-signin{
+.form-section-signin,
+.box-profil,
+.edit-container{
     font-family: 'Sen', sans-serif;
     max-width: 400px;
     margin: 0 auto;             
@@ -63,7 +68,9 @@ h1{
 .form-section-signup input[type="text"],
 .form-section-signup input[type="password"],
 .form-section-signin input[type="text"],
-.form-section-signin input[type="password"]{
+.form-section-signin input[type="password"],
+.edit-container input[type="text"],
+.edit-container input[type="password"]{
     width: 100%;
     padding: 12px;              
     margin: 10px 0;
@@ -74,7 +81,8 @@ h1{
 }
 
 .form-section-signup button,
-.form-section-signin button{
+.form-section-signin button,
+.edit-container button{
     font-family: 'Sen', sans-serif;
     width: 100%;
     padding: 12px;
@@ -88,6 +96,54 @@ h1{
 }
 
 .form-section-signup button:hover,
-.form-section-signin button:hover{
+.form-section-signin button:hover,
+.edit-container button:hover{
     transform: scale(1.1);
+}
+
+
+.box-profil {
+    list-style: none;
+}
+
+.box-profil li {
+    margin: 15px 0;
+    border-bottom: 1px solid #9f1616;
+    padding-bottom: 10px;
+}
+
+.box-profil li:last-child {
+    border-bottom: none;
+}
+
+.box-profil a {
+    text-decoration: none;
+    color: #333;
+    font-family: 'Sen', sans-serif;
+    font-size: 18px;
+    display: block;
+    transition: color 0.3s;
+}
+
+.box-profil a:hover {
+    color: #9f1616;
+}
+
+.edit-container label {
+    display: block;
+    text-align: left;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #555;
+}
+            
+.message-info{
+    font-family: 'Sen', sans-serif;
+    font-weight: bold;
+    color: #721c24;
+    background-color: #f8d7da; 
+    border: 1px solid #f5c6cb; 
+    padding: 10px;             
+    border-radius: 5px;        
+    text-align: center;
 }
