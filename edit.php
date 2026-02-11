@@ -2,69 +2,113 @@
 
 include 'config.php';
 
-if(!isset($_SESSION['username'])){
+
+// Vérification de connexion
+
+if (!isset($_SESSION['username'])) {
     header('Location: signin.php');
     exit();
 }
 
-if(!empty($_POST)){
-    $new_username =($_POST['username']);
+$message = "";
+
+
+// Récupération des données du formulaire
+
+if (!empty($_POST)) {
+    $new_username = trim($_POST['new_username']);
     $current_password = $_POST['current_password'];
     $new_password = $_POST['new_password'];
     $confirm_password = $_POST['confirm_password'];
 
-    if(empty($new_username) || empty($current_password)){
+
+    // Vérification des champs obligatoires
+
+    if (empty($new_username) || empty($current_password)) {
         $message = 'Veuillez remplir tous les champs obligatoires.';
-    }
-    else{
-        $sql = 'SELECT * FROM user WHERE username = :username';
-        $stmt = $pdo->prepare($sql);
+    } else {
+
+
+        // 1. Récupération des infos de l'utilisateur actuel
+
+        $stmt = $pdo->prepare('SELECT * FROM user WHERE username = :username');
         $stmt->execute([':username' => $_SESSION['username']]);
         $user = $stmt->fetch();
 
-        if ($user && password_verify($current_password, $user['password'])){
 
-        if (!empty($new_password) || !empty($confirm_password)){
-            if($new_password !== $confirm_password){
-                $message = 'Les mots de passe ne correspondent pas.';
-            }
-            elseif(strlen($new_password) < 8 || !preg_match('/[0-9]/', $new_password) || !preg_match('/[A-Z]/', $new_password)){
-                $message = 'Le mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre.';
-            }
-            else{
-                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                $updateSql = 'UPDATE user SET username = :username, password = :new_password WHERE username = :current_username';
-                $updateStmt = $pdo ->prepare($updateSql);
+        // 2. Vérifier si le mot de passe actuel est bon
 
-                if($updateStmt->execute([':new_username' => $new_username, ':new_password' => $hashed_password, ':current_username' => $_SESSION['username']])){
-                    $_SESSION['username'] = $new_username;
-                    $message = 'Profil et mot de passe mis à jour avec succès.';
-                    header('Location: profil.php');
-                    exit();
-                }
-                else{
-                    $message = 'Erreur lors de la mise à jour du profil.';
+        if ($user && password_verify($current_password, $user['password'])) {
+            
+
+            // 3. Vérifier si le nouveau pseudo est déjà pris (si on le change)
+
+            $pseudo_ok = true;
+            if ($new_username !== $_SESSION['username']) {
+                $checkUser = $pdo->prepare('SELECT id FROM user WHERE username = :new_user');
+                $checkUser->execute([':new_user' => $new_username]);
+                if ($checkUser->fetch()) {
+                    $message = "Ce nom d'utilisateur est déjà utilisé.";
+                    $pseudo_ok = false;
                 }
             }
-        }
-        else{
-            $updateSql = 'UPDATE user SET username = :new_username WHERE username = :current_username';
-            $updateStmt = $pdo->prepare($updateSql);
 
-            if($updateStmt->execute([':new_username' => $new_username, ':current_username' => $_SESSION['username']])){
-                $_SESSION['username'] = $new_username;
-                $message = 'Profil mis à jour avec succès.';
-                header('Location: profil.php');
-                exit();
-            }
-            else{
-                $message = 'Erreur lors de la mise à jour du profil.';
+            if ($pseudo_ok) {
 
+
+                // CAS A : Changement de mot de pasee
+
+                if (!empty($new_password)) {
+                    if ($new_password !== $confirm_password) {
+                        $message = 'Les nouveaux mots de passe ne correspondent pas.';
+                    } 
+                    elseif (strlen($new_password) < 8 || !preg_match('/[0-9]/', $new_password) || !preg_match('/[A-Z]/', $new_password)) {
+                        $message = 'Le mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre.';
+                    } 
+                    else {
+                        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                        
+                        $updateSql = 'UPDATE user SET username = :new_username, password = :new_password WHERE username = :old_username';
+                        $stmtUpdate = $pdo->prepare($updateSql);
+                        
+                        if ($stmtUpdate->execute([
+                            ':new_username' => $new_username, 
+                            ':new_password' => $hashed_password, 
+                            ':old_username' => $_SESSION['username']
+                        ])) {
+                            $_SESSION['username'] = $new_username;
+                            $message = 'Profil et mot de passe mis à jour avec succès.';
+                            header('Location: profil.php');
+                            exit();
+                        } else {
+                            $message = 'Erreur lors de la mise à jour.';
+                        }
+                    }
+                } 
+
+
+                // CAS B : Changement uniquement du Nom d'utilisateur
+
+                else {
+                    $updateSql = 'UPDATE user SET username = :new_username WHERE username = :old_username';
+                    $stmtUpdate = $pdo->prepare($updateSql);
+                    
+                    if ($stmtUpdate->execute([
+                        ':new_username' => $new_username, 
+                        ':old_username' => $_SESSION['username']
+                    ])) {
+                        $_SESSION['username'] = $new_username; 
+                        $message = 'Profil mis à jour avec succès.';
+                        header('Location: profil.php');
+                        exit();
+                        
+                    } else {
+                        $message = 'Erreur lors de la mise à jour.';
+                    }
+                }
             }
-        }
-    }
-        else{
-            $message = 'Mot de passe incorrect.';
+        } else {
+            $message = 'Mot de passe actuel incorrect.';
         }
     }
 }
